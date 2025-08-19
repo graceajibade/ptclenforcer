@@ -52,16 +52,6 @@ func NewS01(prtcl ...*simplelib.SimpleStruct) (*S01, *E01Checker) {
 	}, checker
 }
 
-// S01 - M11 -> S11
-func (x *S01) M11() (S11, string) {
-	if x.used {
-		panic("S01 has been used")
-	}
-	x.used = true
-	res0 := x.Prtcl.M1()
-	return S11{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
-}
-
 // S11 - M11 -> E01
 func (x *S11) M11() (E01, string) {
 	if x.used {
@@ -71,5 +61,15 @@ func (x *S11) M11() (E01, string) {
 	res0 := x.Prtcl.M1()
 	*x.finalState = true
 	return E01{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
+}
+
+// S01 - M11 -> S11
+func (x *S01) M11() (S11, string) {
+	if x.used {
+		panic("S01 has been used")
+	}
+	x.used = true
+	res0 := x.Prtcl.M1()
+	return S11{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
 }
 

@@ -46,17 +46,6 @@ func NewS03(prtcl ...*simplelib.SimpleStruct) (*S03, *E03Checker) {
 	}, checker
 }
 
-// S03 - M31 -> E03
-func (x *S03) M31() (E03, string) {
-	if x.used {
-		panic("S03 has been used")
-	}
-	x.used = true
-	res0 := x.Prtcl.M2()
-	*x.finalState = true
-	return E03{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
-}
-
 // S03 - M13 -> E03
 func (x *S03) M13() (E03, string) {
 	if x.used {
@@ -64,6 +53,17 @@ func (x *S03) M13() (E03, string) {
 	}
 	x.used = true
 	res0 := x.Prtcl.M1()
+	*x.finalState = true
+	return E03{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
+}
+
+// S03 - M31 -> E03
+func (x *S03) M31() (E03, string) {
+	if x.used {
+		panic("S03 has been used")
+	}
+	x.used = true
+	res0 := x.Prtcl.M2()
 	*x.finalState = true
 	return E03{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
 }

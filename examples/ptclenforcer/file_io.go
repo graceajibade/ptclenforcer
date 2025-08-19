@@ -58,6 +58,17 @@ func NewOpened(prtcl ...*os.File) (*Opened, *ClosedChecker) {
 	}, checker
 }
 
+// Read - Close -> Closed
+func (x *Read) Close() (Closed, error) {
+	if x.used {
+		panic("Read has been used")
+	}
+	x.used = true
+	res0 := x.Prtcl.Close()
+	*x.finalState = true
+	return Closed{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
+}
+
 // Opened - Write -> Written
 func (x *Opened) Write(data []byte) (Written, int, error) {
 	if x.used {
@@ -82,17 +93,6 @@ func (x *Opened) Read(buf []byte) (Read, int, error) {
 func (x *Written) Close() (Closed, error) {
 	if x.used {
 		panic("Written has been used")
-	}
-	x.used = true
-	res0 := x.Prtcl.Close()
-	*x.finalState = true
-	return Closed{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
-}
-
-// Read - Close -> Closed
-func (x *Read) Close() (Closed, error) {
-	if x.used {
-		panic("Read has been used")
 	}
 	x.used = true
 	res0 := x.Prtcl.Close()

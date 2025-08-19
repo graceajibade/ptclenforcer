@@ -68,6 +68,17 @@ func NewCheck(prtcl ...*json.Decoder) (*Check, *DecoderDoneChecker) {
 	}, checker
 }
 
+// NoMoreData - Close -> DecoderDone
+func (x *NoMoreData) Close() (DecoderDone, json.Token) {
+	if x.used {
+		panic("NoMoreData has been used")
+	}
+	x.used = true
+	res0 := x.Prtcl.Buffered()
+	*x.finalState = true
+	return DecoderDone{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
+}
+
 // Check - More -> MoreResp
 func (x *Check) More() (MoreResp, bool) {
 	if x.used {
@@ -89,16 +100,5 @@ func (x *StartDecode) Decode(v any) (Check, error) {
 	x.used = true
 	res0 := x.Prtcl.Decode(v)
 	return Check{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
-}
-
-// NoMoreData - Close -> DecoderDone
-func (x *NoMoreData) Close() (DecoderDone, json.Token) {
-	if x.used {
-		panic("NoMoreData has been used")
-	}
-	x.used = true
-	res0 := x.Prtcl.Buffered()
-	*x.finalState = true
-	return DecoderDone{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
 }
 

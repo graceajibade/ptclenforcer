@@ -105,41 +105,6 @@ func TestGenerateTSSTransactionFSM(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// func TestGenerateTSFileIOFSM(t *testing.T) {
-// 	fsm := FSM{
-// 		Labels: SetFromLabels("Write", "Close"),
-// 		States: SetFromStates("Written"),
-// 		S0:     "Opened",
-// 		F:      "Closed",
-// 		D: Transition{
-// 			{"Opened", "Write"}: []Pair{{TransitionState: "Written"}},
-// 			{"Written", "Close"}: []Pair{{TransitionState: "Closed"}},
-// 		},
-// 	}
-
-// 	rawLogic := RawTransition{
-// 		{State: "Opened", Label: "Write"}: {
-// 			Name:    "Write",
-// 			Inputs:  []string{"data []byte"},
-// 			Outputs: []string{"int", "error"},
-// 		},
-// 		{State: "Written", Label: "Close"}: {
-// 			Name:    "Close",
-// 			Inputs:  []string{},
-// 			Outputs: []string{"error"},
-// 		},
-// 	}
-
-// 	api, err := GenerateTSAPI(fsm, rawLogic, "os", "File")
-// 	assert.NoError(t, err)
-
-// 	tsString, err := GenerateTSString(api, "os")
-// 	assert.NoError(t, err)
-
-// 	err = GenerateTSFile(tsString, "../../examples/ptclenforcer/file_io.go")
-// 	assert.NoError(t, err)
-// }
-
 func TestGenerateTSFileIOFSM(t *testing.T) {
 	fsm := FSM{
 		Labels: SetFromLabels("Write", "Read", "Close"),
