@@ -2,7 +2,7 @@
 pkg bufio
 import "bufio"
 protocol Scanner
-file ./tsgen/examples/generatedfiles/bufio_scanner.go
+file ./tsgen/examples/generatedfiles/ptclenforcer/bufio_scanner.go
 
 // --- Initial & final states ---
 s0 StartScan

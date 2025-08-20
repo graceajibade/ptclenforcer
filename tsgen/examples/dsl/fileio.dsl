@@ -2,7 +2,7 @@
 pkg os
 import "os"
 protocol File
-file ./tsgen/examples/generatedfiles/file_io.go
+file ./tsgen/examples/generatedfiles/ptclenforcer/file_io.go
 
 // --- Initial & final states ---
 s0 Opened

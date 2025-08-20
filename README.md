@@ -141,3 +141,97 @@ Under the hood this calls your pipeline:
 You can also bypass the DSL entirely and construct the FSM programmatically,
 then call the generator (GenerateTSAPI → GenerateTSString → GenerateTSFile)
 from ptclenforcer.
+
+## ptclenforcer
+This is the core engine that takes a finite state machine (FSM) and method definitions (RawTransitions), and generates Go code that enforces protocol rules using the type system. 
+
+### Testing
+To test the ptclenforcer, the FSM and RawTransition have to defined as follows:
+
+```code
+fsm := FSM{
+		Labels: SetFromLabels("Write", "Read", "Close"),
+		States: SetFromStates("Opened", "Written", "Read", "Closed"),
+		S0:     "Opened",
+		F:      "Closed",
+		D: Transition{
+			{"Opened", "Write"}: []Pair{{TransitionState: "Written"}},
+			{"Opened", "Read"}:  []Pair{{TransitionState: "Read"}},
+			{"Written", "Close"}: []Pair{{TransitionState: "Closed"}},
+			{"Read", "Close"}:    []Pair{{TransitionState: "Closed"}},
+		},
+	}
+
+rawLogic := RawTransition{
+		{State: "Opened", Label: "Write"}: {
+			Name:    "Write",
+			Inputs:  []string{"data []byte"},
+			Outputs: []string{"int", "error"},
+		},
+		{State: "Opened", Label: "Read"}: {
+			Name:    "Read",
+			Inputs:  []string{"buf []byte"},
+			Outputs: []string{"int", "error"},
+		},
+		{State: "Written", Label: "Close"}: {
+			Name:    "Close",
+			Inputs:  []string{},
+			Outputs: []string{"error"},
+		},
+		{State: "Read", Label: "Close"}: {
+			Name:    "Close",
+			Inputs:  []string{},
+			Outputs: []string{"error"},
+		},
+	}
+
+api, err := GenerateTSAPI(fsm, rawLogic, "os", "File")
+tsString, err := GenerateTSString(api, "os")
+err = GenerateTSFile(tsString, "../../examples/ptclenforcer/file_io.go")
+```
+See more examples [here](test/realpkgs/realpkgs_test.go). 
+
+## dslgen
+A tool that allows for protocols to be written in a custom DSL (domain-specific language), parses and converts them into structured FSMs and method definitions and then calls `ptclenforcer` for code generation.
+
+### Testing
+To test the dslgen, the protocol has to defined as follows:
+
+```text
+pkg json
+import "encoding/json"
+protocol Decoder
+file ../../examples/dslgenerated/dsl_generated.go
+
+s0 Check
+fstate DecoderDone
+
+state Check
+state StartDecode
+state NoMoreData
+state DecoderDone
+
+Check -> More: More() -> StartDecode when true
+Check -> More: More() -> NoMoreData when false
+StartDecode -> Decode: Decode(v any) -> Check
+NoMoreData -> Close: Buffered() -> DecoderDone
+
+raw Check More name More() returns bool
+raw StartDecode Decode name Decode(v any) returns error
+raw NoMoreData Close name Buffered() returns json.Token
+```
+The `GenerateFromDSL` function in `dslgen` can then be called to:
+* Generate the DTO and 
+* Use ptclenforcer to generate the files.
+
+### tsgen
+A command-line tool that combines `dslgen` and `ptclenforcer`,accepting a written custom DSL as file and automating the entire process from protocol specification to generated Go code.
+
+### Testing
+To test, simply run the following commands:
+
+`go build -o ./path/to/tsgen/executable ./path/to/tsgen/code`
+`./path/to/tsgen/executable -dsl path/to/protocol.dsl`
+
+### Generated files
+Testing the generated files should be done the usual way, see [here](examples) for examples of generated files are their tests.

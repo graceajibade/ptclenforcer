@@ -1,8 +1,3 @@
-/** 
-use "go build -o ./path/to/tsgen/executable ./path/to/tsgen/code" to build an executable 
-use "./path/to/tsgen/executable -dsl path/to/protocol.dsl" to run
-**/
-
 package main
 
 import (
