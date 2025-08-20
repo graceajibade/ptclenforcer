@@ -26,7 +26,7 @@ func SetFromLabels(labels ...string) Set[Label] {
 func TestGenerateTSSExecCmdLifecycle(t *testing.T) {
 	fsm := FSM{
 		Labels: SetFromLabels("Start", "Wait"),
-		States: SetFromStates("Started"),
+		States: SetFromStates("Started", "Initialized", "Waited"),
 		S0:     "Initialized",
 		F:      "Waited",
 		D: Transition{
@@ -67,7 +67,7 @@ func TestGenerateTSSExecCmdLifecycle(t *testing.T) {
 func TestGenerateTSSTransactionFSM(t *testing.T) {
 	fsm := FSM{
 		Labels: SetFromLabels("Exec", "Commit", "Rollback"),
-		States: SetFromStates( "Queried"),
+		States: SetFromStates( "Queried", "TxStarted", "TxFinished"),
 		S0:     "TxStarted",
 		F:      "TxFinished",
 		D: Transition{
@@ -108,7 +108,7 @@ func TestGenerateTSSTransactionFSM(t *testing.T) {
 func TestGenerateTSFileIOFSM(t *testing.T) {
 	fsm := FSM{
 		Labels: SetFromLabels("Write", "Read", "Close"),
-		States: SetFromStates("Written", "Read"),
+		States: SetFromStates("Opened", "Written", "Read", "Closed"),
 		S0:     "Opened",
 		F:      "Closed",
 		D: Transition{
@@ -155,8 +155,8 @@ func TestGenerateTSFileIOFSM(t *testing.T) {
 
 func TestGenerateTSBufioScannerFSM(t *testing.T) {
 	fsm := FSM{
-		States: SetFromStates("HasLine", "NoMoreLines"),
 		Labels: SetFromLabels("Scan", "Text", "Close"),
+		States: SetFromStates("StartScan", "HasLine", "NoMoreLines", "ScannerDone"),
 		S0:     "StartScan",
 		F:      "ScannerDone",
 		D: Transition{
@@ -199,8 +199,8 @@ func TestGenerateTSBufioScannerFSM(t *testing.T) {
 
 func TestGenerateTSJsonDecoderFSM(t *testing.T) {
 	fsm := FSM{
-		States: SetFromStates("StartDecode", "NoMoreData"),
 		Labels: SetFromLabels("More", "Decode", "Close"),
+		States: SetFromStates("Check", "StartDecode", "NoMoreData", "DecoderDone"),
 		S0:     "Check",
 		F:      "DecoderDone",
 		D: Transition{
