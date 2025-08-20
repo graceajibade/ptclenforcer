@@ -235,3 +235,7 @@ To test, simply run the following commands:
 
 ### Generated files
 Testing the generated files should be done the usual way, see [here](examples) for examples of generated files are their tests.
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.

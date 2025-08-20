@@ -156,6 +156,23 @@ func Test_Tx_Exec_Rollback(t *testing.T) {
 	assert.IsType(t, TxFinished{}, end)
 }
 
+func Test_Tx_Exec_Rollback_ShouldPanic(t *testing.T) {
+	db := setupTestDB(t)
+	tx, err := db.Begin()
+	assert.NoError(t, err)
+
+	start, finalState := NewTxStarted(tx)
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("Expected panic due to not reaching final state")
+		}
+	}()
+
+	defer finalState.FinalizeChecker()()
+	_ = start
+}
+
 func File_Write_Then_Read_Close(t *testing.T) (Closed, Closed) {
 	tmpfile, err := os.CreateTemp("", "typestate_example_*.txt")
 	assert.NoError(t, err)
