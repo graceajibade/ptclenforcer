@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	dsl "school/project/dslgen"
+	dsl "github.com/graceajibade/ptclenforcer/dslgen"
 )
 
 func main() {

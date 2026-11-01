@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	. "school/project/tsgen/examples/generatedfiles/ptclenforcer"
+	. "github.com/graceajibade/ptclenforcer/examples/cli/generatedfiles/ptclenforcer"
 )
 
 func expectPanic(t *testing.T, f func(), msg string) {

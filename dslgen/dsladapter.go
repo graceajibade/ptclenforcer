@@ -1,7 +1,7 @@
 package dslgen
 
 import (
-	. "school/project/cmd"
+	. "github.com/graceajibade/ptclenforcer/cmd"
 )
 
 // GenSpecDTO is a tiny, stable Data Transfer Object (DTO) the DSL side can build.

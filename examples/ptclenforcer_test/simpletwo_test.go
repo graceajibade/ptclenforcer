@@ -3,7 +3,7 @@ package example_tests
 import (
 	"testing"
 
-	. "school/project/examples/ptclenforcer"
+	. "github.com/graceajibade/ptclenforcer/examples/ptclenforcer"
 	"github.com/stretchr/testify/assert"
 )
 

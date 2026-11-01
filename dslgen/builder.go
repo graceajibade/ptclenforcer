@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	parser "school/project/parser/antlr"
+	parser "github.com/graceajibade/ptclenforcer/parser/antlr"
 	"github.com/antlr4-go/antlr/v4"
 )
 

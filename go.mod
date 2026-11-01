@@ -1,4 +1,4 @@
-module school/project
+module github.com/graceajibade/ptclenforcer
 
 go 1.24.3
 

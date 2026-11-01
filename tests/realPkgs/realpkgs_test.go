@@ -2,7 +2,7 @@ package realpkgstest
 
 import (
 	"testing"
-	. "school/project/cmd"
+	. "github.com/graceajibade/ptclenforcer/cmd"
 	
 	"github.com/stretchr/testify/assert"
 )

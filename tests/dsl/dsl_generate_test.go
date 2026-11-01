@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	dsl "school/project/dslgen"
+	dsl "github.com/graceajibade/ptclenforcer/dslgen"
 )
 
 func TestDSL_Generates_JSONDecoder(t *testing.T) {

@@ -2,7 +2,7 @@ package simpletest
 
 import (
 	"testing"
-	. "school/project/cmd"
+	. "github.com/graceajibade/ptclenforcer/cmd"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -48,7 +48,7 @@ func TestGenerateTSSM1_Simple(t *testing.T) {
 	api, err := GenerateTSAPI(fsm, rawLogic, "simplelib", "SimpleStruct")
 	assert.NoError(t, err)
 
-	tsString, err := GenerateTSString(api, "school/project/simplelib")
+	tsString, err := GenerateTSString(api, "github.com/graceajibade/ptclenforcer/simplelib")
 	assert.NoError(t, err)
 
 	err = GenerateTSFile(tsString, "../../examples/ptclenforcer/M1_end.go")
@@ -90,7 +90,7 @@ func TestGenerateTSSM2_Simple(t *testing.T) {
 	api, err := GenerateTSAPI(fsm, rawLogic, "simplelib", "SimpleStruct")
 	assert.NoError(t, err)
 
-	tsString, err := GenerateTSString(api, "school/project/simplelib")
+	tsString, err := GenerateTSString(api, "github.com/graceajibade/ptclenforcer/simplelib")
 	assert.NoError(t, err)
 
 	err = GenerateTSFile(tsString, "../../examples/ptclenforcer/M11_M11_end.go")
@@ -132,7 +132,7 @@ func TestGenerateTSSM12_Simple(t *testing.T) {
 	api, err := GenerateTSAPI(fsm, rawLogic, "simplelib", "SimpleStruct")
 	assert.NoError(t, err)
 
-	tsString, err := GenerateTSString(api, "school/project/simplelib")
+	tsString, err := GenerateTSString(api, "github.com/graceajibade/ptclenforcer/simplelib")
 	assert.NoError(t, err)
 
 	err = GenerateTSFile(tsString, "../../examples/ptclenforcer/M12_M21_end.go")
@@ -174,7 +174,7 @@ func TestGenerateTSSM13or31_Simple(t *testing.T) {
 	api, err := GenerateTSAPI(fsm, rawLogic, "simplelib", "SimpleStruct")
 	assert.NoError(t, err)
 
-	tsString, err := GenerateTSString(api, "school/project/simplelib")
+	tsString, err := GenerateTSString(api, "github.com/graceajibade/ptclenforcer/simplelib")
 	assert.NoError(t, err)
 
 	err = GenerateTSFile(tsString, "../../examples/ptclenforcer/M13_or_M31_end.go")
@@ -232,7 +232,7 @@ func TestGenerateTSSM12or21_Simple(t *testing.T) {
 	api, err := GenerateTSAPI(fsm, rawLogic, "simplelib", "SimpleStruct")
 	assert.NoError(t, err)
 
-	tsString, err := GenerateTSString(api, "school/project/simplelib")
+	tsString, err := GenerateTSString(api, "github.com/graceajibade/ptclenforcer/simplelib")
 	assert.NoError(t, err)
 
 	err = GenerateTSFile(tsString, "../../examples/ptclenforcer/M14_M41_or_M41_M14_end.go")

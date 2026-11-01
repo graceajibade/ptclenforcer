@@ -3,7 +3,7 @@ package example_tests
 import (
 	"testing"
 	"github.com/stretchr/testify/assert"
-	. "school/project/examples/ptclenforcer"
+	. "github.com/graceajibade/ptclenforcer/examples/ptclenforcer"
 )
 
 func M1_End(t *testing.T) E00 {

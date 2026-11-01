@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	. "school/project/examples/ptclenforcer"
+	. "github.com/graceajibade/ptclenforcer/examples/ptclenforcer"
 	_ "github.com/mattn/go-sqlite3"
 )
 

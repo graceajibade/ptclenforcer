@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	. "school/project/tsgen/examples/generatedfiles/ptclenforcer"
+	. "github.com/graceajibade/ptclenforcer/examples/cli/generatedfiles/ptclenforcer"
 )
 
 func File_Write_Then_Close(t *testing.T) Closed {

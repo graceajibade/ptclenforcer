@@ -2,7 +2,7 @@ package simpletest
 
 import (
 	"testing"
-	. "school/project/cmd"
+	. "github.com/graceajibade/ptclenforcer/cmd"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -49,7 +49,7 @@ func TestGenerateTSS_SimpleTwo(t *testing.T) {
 	api, err := GenerateTSAPI(fsm, rawLogic, "simplelib", "SimpleStructTwo")
 	assert.NoError(t, err)
 
-	tsString, err := GenerateTSString(api, "school/project/simplelib")
+	tsString, err := GenerateTSString(api, "github.com/graceajibade/ptclenforcer/simplelib")
 	assert.NoError(t, err)
 
 	err = GenerateTSFile(tsString, "../../examples/ptclenforcer/MM10_to_SS10_or_SS20.go")

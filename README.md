@@ -13,14 +13,62 @@ Typical use cases:
 
 ---
 
+## Quick start
+
+From the repository root, run everything with:
+
+```bash
+make all
+```
+
+This builds `cmd/tsgen`, runs all tests, generates the bundled file protocol,
+and tests the generated wrappers. Individual steps are available as
+`make build`, `make test`, and `make run-example`.
+
+## Before and after: reject invalid operations at compile time
+
+The ordinary `os.File` API allows this code to compile. The write fails only
+at runtime because the file has already been closed:
+
+```go
+// f is an open *os.File; error handling omitted for focus.
+f.Close()
+f.Write([]byte("too late")) // Compiles; returns an error at runtime.
+```
+
+The [bundled file protocol](examples/cli/dsl/fileio.dsl) permits only
+`Opened → Write → Written → Close → Closed`. Its generated API makes the
+same invalid operation a compile-time error:
+
+```go
+// Import ts "github.com/graceajibade/ptclenforcer/examples/cli/generatedfiles/ptclenforcer".
+opened, checker := ts.NewOpened(f)
+defer checker.FinalizeChecker()()
+written, _, err := opened.Write([]byte("hello"))
+if err != nil {
+    panic(err)
+}
+closed, err := written.Close()
+if err != nil {
+    panic(err)
+}
+closed.Write([]byte("too late")) // Compile error: Closed has no method Write.
+```
+
+Each state exposes only its permitted operations. Runtime guards detect reuse
+of a consumed state, and the deferred checker verifies that the final state was
+reached. Go does not enforce linear ownership: these runtime checks complement
+the method restrictions, and callers must avoid bypassing the wrapper through
+its exported `Prtcl` field.
+
 ## Requirements
 
-- Go 1.21+
+- Go 1.24.3+
 - ANTLR 4 (only needed if you edit `TSgen.g4` and regenerate the parser)
   - Install guide: https://www.antlr.org/
   - Regenerate command (from repo root):
     ```bash
-    antlr4 -Dlanguage=Go -visitor TSgen.g4
+    (cd antlr && antlr4 -Dlanguage=Go -visitor -o ../parser/antlr TSgen.g4)
     ```
 
 > If you are **not** modifying the grammar, you can skip ANTLR.
@@ -63,26 +111,28 @@ raw NoMoreData Close name Buffered() returns json.Token
 ### 2) Build the CLI executable
 
 From the repo root (where go.mod lives):
-```code
-go build -o tsgen ./tsgen/tsgen
+```bash
+go build -o tsgen ./cmd/tsgen
 ```
 
 This produces a local ./tsgen binary.
 
 ### 3) Generate code from the DSL
 
-```code
-./tsgen -dsl path/to/protocol.dsl
+```bash
+./tsgen -dsl ./examples/cli/dsl/fileio.dsl
 ```
 
-The tool will write the Go file declared in the DSL’s file line (here
-./dsl_generated.go) and print its path.
+The tool writes the Go file declared in the DSL’s `file` line and prints its
+path. The bundled example writes `examples/cli/generatedfiles/ptclenforcer/file_io.go`.
+To use your own protocol, pass `-dsl ./protocol.dsl`. Paths in the DSL are
+relative to your current working directory.
 
 ### 4) Use the generated API
 
 Import the generated file in your project and use the safe, stateful API. For example,
 you’ll get constructors and methods like:
-```code
+```go
 check, done := NewCheck()             // constructor for the start state
 next, ok := check.More()              // branches based on More()'s bool
 defer done.FinalizeChecker()()        // panic if final state is never reached
@@ -91,12 +141,12 @@ defer done.FinalizeChecker()()        // panic if final state is never reached
 ## Part B — Call the Generator From Another Go Program (Library)
 
 Instead of using the CLI, you can create code from a DSL string at runtime:
-```code
+```go
 package main
 
 import (
     "fmt"
-    dsl "school/project/dsl"
+    dsl "github.com/graceajibade/ptclenforcer/dslgen"
 )
 
 func main() {
@@ -143,12 +193,12 @@ then call the generator (GenerateTSAPI → GenerateTSString → GenerateTSFile)
 from ptclenforcer.
 
 ## ptclenforcer
-This is the core engine that takes a finite state machine (FSM) and method definitions (RawTransitions), and generates Go code that enforces protocol rules using the type system. 
+This is the core engine that takes a finite state machine (FSM) and method definitions (RawTransitions), and generates Go code that enforces protocol rules using the type system.
 
 ### Testing
 To test the ptclenforcer, the FSM and RawTransition have to defined as follows:
 
-```code
+```go
 fsm := FSM{
 		Labels: SetFromLabels("Write", "Read", "Close"),
 		States: SetFromStates("Opened", "Written", "Read", "Closed"),
@@ -189,7 +239,7 @@ api, err := GenerateTSAPI(fsm, rawLogic, "os", "File")
 tsString, err := GenerateTSString(api, "os")
 err = GenerateTSFile(tsString, "../../examples/ptclenforcer/file_io.go")
 ```
-See more examples [here](test/realpkgs/realpkgs_test.go). 
+See more examples [here](tests/realPkgs/realpkgs_test.go).
 
 ## dslgen
 A tool that allows for protocols to be written in a custom DSL (domain-specific language), parses and converts them into structured FSMs and method definitions and then calls `ptclenforcer` for code generation.
@@ -221,7 +271,7 @@ raw StartDecode Decode name Decode(v any) returns error
 raw NoMoreData Close name Buffered() returns json.Token
 ```
 The `GenerateFromDSL` function in `dslgen` can then be called to:
-* Generate the DTO and 
+* Generate the DTO and
 * Use ptclenforcer to generate the files.
 
 ### tsgen
@@ -230,8 +280,11 @@ A command-line tool that combines `dslgen` and `ptclenforcer`,accepting a writte
 ### Testing
 To test, simply run the following commands:
 
-`go build -o ./path/to/tsgen/executable ./path/to/tsgen/code`
-`./path/to/tsgen/executable -dsl path/to/protocol.dsl`
+```bash
+go build -o tsgen ./cmd/tsgen
+./tsgen -dsl ./examples/cli/dsl/fileio.dsl
+go test ./...
+```
 
 ### Generated files
 Testing the generated files should be done the usual way, see [here](examples) for examples of generated files are their tests.
