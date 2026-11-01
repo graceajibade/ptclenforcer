@@ -52,16 +52,6 @@ func NewInitialized(prtcl ...*exec.Cmd) (*Initialized, *WaitedChecker) {
 	}, checker
 }
 
-// Initialized - Start -> Started
-func (x *Initialized) Start() (Started, error) {
-	if x.used {
-		panic("Initialized has been used")
-	}
-	x.used = true
-	res0 := x.Prtcl.Start()
-	return Started{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
-}
-
 // Started - Wait -> Waited
 func (x *Started) Wait() (Waited, error) {
 	if x.used {
@@ -71,5 +61,15 @@ func (x *Started) Wait() (Waited, error) {
 	res0 := x.Prtcl.Wait()
 	*x.finalState = true
 	return Waited{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
+}
+
+// Initialized - Start -> Started
+func (x *Initialized) Start() (Started, error) {
+	if x.used {
+		panic("Initialized has been used")
+	}
+	x.used = true
+	res0 := x.Prtcl.Start()
+	return Started{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
 }
 

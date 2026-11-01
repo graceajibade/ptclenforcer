@@ -195,8 +195,10 @@ from ptclenforcer.
 ## ptclenforcer
 This is the core engine that takes a finite state machine (FSM) and method definitions (RawTransitions), and generates Go code that enforces protocol rules using the type system.
 
-### Testing
-To test the ptclenforcer, the FSM and RawTransition have to defined as follows:
+### Programmatic Usage
+
+To generate a typestate API programmatically, define the FSM and raw method
+signatures, then pass them to the generator:
 
 ```go
 fsm := FSM{
@@ -244,8 +246,9 @@ See more examples [here](tests/realPkgs/realpkgs_test.go).
 ## dslgen
 A tool that allows for protocols to be written in a custom DSL (domain-specific language), parses and converts them into structured FSMs and method definitions and then calls `ptclenforcer` for code generation.
 
-### Testing
-To test the dslgen, the protocol has to defined as follows:
+### Programmatic Usage
+
+Define a protocol in the DSL, then pass its text to `dslgen.GenerateFromDSL`:
 
 ```text
 pkg json

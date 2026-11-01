@@ -18,13 +18,13 @@ type NoMoreData struct {
 	used bool
 }
 
-type Check struct {
+type DecoderDone struct {
 	Prtcl *json.Decoder
 	finalState *bool
 	used bool
 }
 
-type DecoderDone struct {
+type Check struct {
 	Prtcl *json.Decoder
 	finalState *bool
 	used bool
@@ -68,6 +68,19 @@ func NewCheck(prtcl ...*json.Decoder) (*Check, *DecoderDoneChecker) {
 	}, checker
 }
 
+// Check - More -> MoreResp
+func (x *Check) More() (MoreResp, bool) {
+	if x.used {
+		panic("Check has been used")
+	}
+	x.used = true
+	res0 := x.Prtcl.More()
+	if res0 == true {
+		return StartDecode{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
+	}
+	return NoMoreData{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
+}
+
 // StartDecode - Decode -> Check
 func (x *StartDecode) Decode(v any) (Check, error) {
 	if x.used {
@@ -87,18 +100,5 @@ func (x *NoMoreData) Close() (DecoderDone, json.Token) {
 	res0 := x.Prtcl.Buffered()
 	*x.finalState = true
 	return DecoderDone{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
-}
-
-// Check - More -> MoreResp
-func (x *Check) More() (MoreResp, bool) {
-	if x.used {
-		panic("Check has been used")
-	}
-	x.used = true
-	res0 := x.Prtcl.More()
-	if res0 == true {
-		return StartDecode{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
-	}
-	return NoMoreData{Prtcl: x.Prtcl, finalState: x.finalState, used: false}, res0
 }
 
